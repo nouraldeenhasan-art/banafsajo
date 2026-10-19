@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /lessons/
+Disallow: /sims/
+Disallow: /student/
+Disallow: /files/
+Disallow: /files.html
+Sitemap: https://banafsajo.netlify.app/sitemap.xml

@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>مختبر الزوايا · منصة بنفسجو</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap">
+<style>
+:root{--navy:#0B6E8F;--sun:#C9F3EE;--vio:#5B7FE6;--ok:#1B7F3B;--bad:#C0392B;--bg:#F3FBFC;--paper:#fff;--line:#CDE9F0;--fg:#10303B;--muted:#557585}
+*{box-sizing:border-box}html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:Tajawal,system-ui,sans-serif;font-size:18px;line-height:1.5;direction:rtl;display:flex;flex-direction:column}
+header.bar{display:flex;align-items:center;gap:10px;padding:8px 14px;background:var(--navy);color:#fff;flex-wrap:wrap}
+header.bar h1{font-size:20px;margin:0;flex:1;min-width:0}
+header.bar a,header.bar button{font:inherit;font-weight:800;font-size:15px;color:var(--navy);background:var(--sun);border:0;border-radius:999px;padding:6px 14px;cursor:pointer;text-decoration:none;white-space:nowrap}
+header.bar .ghost{background:#fff}
+main{flex:1;display:grid;grid-template-columns:minmax(0,1.5fr) minmax(280px,1fr);gap:14px;padding:14px;max-width:1280px;margin:0 auto;width:100%}
+@media (max-width:760px){main{grid-template-columns:1fr;padding:10px}}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:12px 14px;min-width:0}
+.stage{display:flex;flex-direction:column;gap:8px;align-items:stretch}
+.stage svg{width:100%;height:auto;display:block;touch-action:none;user-select:none}
+.ctl h2{font-size:18px;color:var(--navy);margin:0 0 8px}
+.row{display:flex;align-items:center;gap:10px;margin:8px 0;flex-wrap:wrap}
+.row label{font-weight:700;min-width:90px}
+input[type=range]{flex:1;min-width:120px;accent-color:var(--vio);height:32px}
+.val{font-weight:800;color:var(--vio);min-width:48px;text-align:center;background:#E6F6F9;border-radius:8px;padding:2px 8px}
+.btn{font:inherit;font-weight:800;font-size:17px;padding:10px 16px;border-radius:12px;border:2px solid var(--navy);background:var(--navy);color:#fff;cursor:pointer;min-height:44px}
+.btn.alt{background:#fff;color:var(--navy)}.btn.sun{background:var(--sun);color:var(--navy);border-color:var(--sun)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.readout{background:#E6F6F9;border-radius:12px;padding:10px 12px;font-weight:700;font-size:19px;line-height:1.7}
+.readout b{color:var(--vio)}
+.ok{color:var(--ok)}.bad{color:var(--bad)}
+/* التحدي */
+#chal{display:none;flex-direction:column;gap:10px}
+#chal.on{display:flex}
+#chal .q{font-size:21px;font-weight:800;color:var(--navy)}
+#chal .opts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media (max-width:420px){#chal .opts{grid-template-columns:1fr}}
+#chal .opt{font:inherit;font-size:19px;font-weight:700;padding:12px;border-radius:12px;border:2px solid var(--line);background:#fff;color:var(--fg);cursor:pointer;min-height:48px;text-align:right}
+#chal .opt .l{display:inline-block;width:30px;height:30px;border-radius:50%;background:#E6F6F9;color:var(--vio);text-align:center;line-height:30px;margin-left:8px;font-weight:800}
+#chal .opt.right{border-color:var(--ok);background:#E8F7EE}#chal .opt.wrong{border-color:var(--bad);background:#FDECEC}
+#chal .fb{min-height:28px;font-weight:700}
+#chal .prog{font-size:14px;color:var(--muted)}
+#chal .final{text-align:center;font-size:22px;font-weight:800;color:var(--navy)}
+#chal .final .stars{font-size:30px;color:#B7791F;letter-spacing:4px}
+/* نافذة المساعدة */
+.ov{position:fixed;inset:0;background:rgba(10,20,40,.55);display:none;align-items:center;justify-content:center;padding:16px;z-index:20}
+.ov.on{display:flex}
+.dlg{background:#fff;color:var(--fg);border-radius:16px;padding:20px 22px;max-width:520px;width:100%;position:relative}
+.dlg h3{margin:0 0 8px;color:var(--navy)}.dlg ol{margin:0;padding-right:20px}.dlg li{margin:4px 0}
+.dlg .x{position:absolute;top:8px;left:8px;border:0;background:var(--bg);width:36px;height:36px;border-radius:50%;font-size:18px;cursor:pointer}
+footer{padding:8px 14px;text-align:center;color:var(--muted);font-size:13px}
+/* مختبر الزوايا */
+.seg{display:flex;gap:6px;margin:0 0 10px}
+.seg button{flex:1;font:inherit;font-weight:800;font-size:15px;padding:8px 6px;border-radius:12px;border:2px solid var(--navy);background:#fff;color:var(--navy);cursor:pointer;min-height:44px}
+.seg button.on{background:var(--navy);color:#fff}
+.hint{font-size:14px;color:var(--muted);text-align:center;min-height:20px}
+.mu{color:var(--muted);font-weight:500}
+.sw{display:inline-block;width:14px;height:14px;border-radius:4px;vertical-align:middle;margin-left:4px;border:1px solid #0B6E8F}
+.stage svg text{font-family:Tajawal,system-ui,sans-serif;font-weight:700;text-anchor:middle;fill:#10303B}
+.stage svg .lb{font-size:16px;fill:#557585}
+.stage svg .num{font-size:13px;font-weight:800}
+.stage svg .ms{font-size:16px}
+.stage svg .qm{font-size:22px;fill:#5B7FE6;font-weight:800}
+.stage svg .tt{font-size:16px;fill:#5B7FE6}
+.pl{stroke:#0B6E8F;stroke-width:3}.pm{fill:none;stroke:#0B6E8F;stroke-width:2}.tr{stroke:#5B7FE6;stroke-width:3}
+.ang{cursor:pointer}.hd,.vx{cursor:grab}
+@media (max-width:520px){header.bar h1{flex:1 1 100%;order:-1;text-align:center;font-size:19px}header.bar{justify-content:center}}
+</style>
+</head>
+<body>
+<script>
+/* بوابة المشتركين — لا تعدّل هذا الجزء. FREE يحدده الباني (true للمحاكاة المجانية). */
+(function(){const HS=["012e78c379c3f4a5", "01ad811bf2322c62", "01ad82b0bcbe5092", "0241cdac84851cdf", "025e27e1d5413d27", "02a512ec1d57e1e4", "02d36ab1e5e2d584", "02e7cfa9fe53ceb4", "03c836ec9332c81e", "03eb067d139b49fe", "046e46e9aa8a6934", "051f5162d1c53896", "0526a006b11cf288", "05dc480130c44376", "0602180344f2b91d", "06fb0d071ffa7feb", "0886d42acfb273c3", "09202c5cb9d5ff80", "09244c669da49de4", "09da27eed4fe15c2", "0a02b360de6d3d2b", "0a0a6db7331817ce", "0a4d4864bd50f83b", "0b3367d0e3eab793", "0ccb83741068905a", "0d7027e3c50927f3", "0eb4265ccd87d492", "0ed82db098d43284", "0f02130279444305", "0f57cd4f61b94fee", "0f6f84071370469a", "0f9d982cbc85390f", "103673ea00200abe", "10976f13e7fb5766", "11191844d9ff680c", "1122e747d291ec4d", "11977edc71ec455e", "11a585d61399c137", "11ab0cd7ef17af96", "1216b931a90f6e02", "1216eb7affcee913", "12181923ac38f889", "1238ba9c6615b56d", "131981aafcd3a85a", "1343d4a835f6f326", "144ed5d87de7f306", "1452e13ae91656b9", "14a249ccd3a2913a", "14b6a39da1b7eb08", "14cdfd7f8a49b1e5", "14f4184374b17dc8", "14fec99ddbe22f97", "15b62050be67436a", "15fc46f9a44b2a37", "161e647d6218ba28", "163e021c540b9168", "1702071151ada2ed", "170f6b4222c2292a", "1765ba4ca559f880", "17b8999db5619c38", "17c10279005c93b2", "19496de8019a218a", "194ea4449fa09470", "1a6e3f34eebe37d3", "1a7ffedfd0612779", "1add720ee46559e3", "1b1efd4c6dc929bb", "1bbdd06a02a44d91", "1bcd87036d266b01", "1beca6cff8aa42b4", "1c14c310057e5423", "1c2c7b55189f6679", "1d66002c4179d41f", "1d9f966c44ec86f8", "1e5b0bfa80bd73f5", "1ee59f885495604a", "1ef5796e7454a314", "1efba66a9c5b7e84", "1f5adfd098c800b2", "1f60768290e6ae9a", "1fe5ebd962ef7e7c", "2031ca577ad46208", "206dbdc4655f12bd", "2121fefb47d2e80e", "21426f83f424bf97", "21fb7ca65ea085a7", "22646fc17f7c4eeb", "237087d5e9b77180", "238f61e133bb8ad1", "239c908f4eeed5a6", "23a42cf5f3700110", "2419a74dbd38e641", "2432187d04032a2b", "247369d0304f0ece", "24aacf281322acfe", "2547672a212f522d", "25c01f20df857762", "25c366f50624660a", "25e3b31e5e2d719d", "26d5e9ae22c8e6b7", "27e0196e6f3fae89", "286336c94a64259b", "2864000cf45e1529", "2899de2b9bed2760", "298b5382c7a1e9be", "2be0e58af38562b7", "2be9ac44fdf6720e", "2c94a85ad4f98fec", "2ce7dbb0cd773ec5", "2d1e2419ef9658e5", "2e3e1b9d9c81687e", "2f4e8a84d61069f2", "2fd57746cbbf8809", "2fef5f35cdd51949", "2ff9e1ebd1f0140d", "31164ce2b2dd1e9a", "31acc32a3b5dba89", "3287a41b1f40debb", "32cfd87d157c496d", "32fc82b470877f59", "32fd28dfb376c349", "34c2f335f97da9ee", "354674b2a191fcf2", "35b80f31c777c8ce", "3624adfd59fb7fc1", "3712bfe59d552e7f", "38fac5b5f6de9110", "3945056d98369def", "3985df49c70f871f", "39c33d25b2e0b039", "3a1f4cf91574d3e4", "3a5e3903eb79add1", "3bf149bc678ab1d6", "3cecc50c134eabe5", "3e0899982a54e958", "3e235dea4bdbe2c2", "3e37aa9c89955856", "3e4f9b8c678d769a", "3f428c98986a17c8", "400c8bfe6e1323cc", "403f892e8fd4d38b", "40bbb08204de485b", "40bce526f9fc35d0", "40bd4492fc37ba81", "415b22869a71f725", "4189456ba314dce5", "41ae743d7f4646d4", "41d2b2f2a591f499", "42d43b26e7c9e6e6", "4355b30fabba4596", "437d16b4e95ea24a", "43d1a93dccd5a87b", "43eaac1b4e301709", "44c92bfb0cc63c20", "45316bb8413fdca8", "464c67e3abf5221f", "46f82b4415f862e1", "49480ca1fbe8d872", "495be342de021672", "49b67da88e04f9be", "49d4c71533e68005", "4a2c14c1ba73aa92", "4ad3d417bf14ac38", "4b5741b16e72b902", "4b969d3d60097082", "4beb51f07e7fe131", "4bf201a08f3977fc", "4c12a26c25495f51", "4c64f039124cf90a", "4cdbef287c1debaf", "4d25fe74f4c2a706", "4e86294430a2157a", "4f6fee8cc0bde28b", "4f82b2611ca427c0", "4f8b931197fca971", "50bd848d18c74be4", "520e9415b7a1c324", "5255d9a027750829", "53a9e390cf2ec4ca", "53bebf51279223ac", "543f94cdc4660f88", "545e04c2fbc5aba7", "5503154b8fc5b513", "5560def5a974898e", "558854903dc225fd", "55aa989256214fa5", "55c792892af42fe0", "55d17ee9a4498359", "56ac673da7178bf3", "5772ee7627fa91cc", "5864f4c76f9f29b4", "589136d64d6c35d6", "58bcca050e3df1a1", "58c3b6eb7d734c51", "5946a79eabb9103c", "5a649d9097ef4602", "5abf4ffe9a9f1120", "5c1e338f8c96d040", "5c5f438c6cd1f1ff", "5cdc366efcd683d4", "5d2d6f9460ddb685", "5d845f1f936f68e9", "5dfb83bf122f2d1e", "5ea926fab08d932b", "5f6ec8a9014c5e6d", "5f8e0c121eb781ca", "5fecb3734b75792a", "6043a9c8bf333e76", "60bb6f7a56e9ed2f", "6189cd6c95a50edb", "61b46a41a11955ce", "6271a61fa2958a5f", "634cbc752a087377", "6447b56188c2659b", "6460436955197ffe", "64ba4112f567b6c7", "64d8c098a6f96422", "65bdbcae1db72960", "66cc6ecb081e510d", "67db22977088de5f", "681f748880ab85c1", "68243a283ebaa1d7", "683dd9728e69fe27", "686fece46b9c8d56", "6a0323cb0ad034f2", "6a19730d08f725a8", "6aa60793eae8f488", "6abc7ba5fa1c6920", "6ae23c6a6dee0c86", "6af23d8bed138d4e", "6b5431767a02bcb2", "6be9ae9463d8d745", "6c57f7bc5d210d76", "6cd078d660e5c5b2", "6d8a97d3076af591", "6d90197668d7ce02", "6e039ed1f7d3b300", "6fa25d7545b71449", "70516a08cdaa7df9", "7088e5d854a954e4", "70d754d226ea3a8f", "70f985791bdb75c8", "71113a66b1d80f63", "7117cd7fe6bcde97", "715715d77e024189", "71b13a1ada3844d7", "71f20dfc2948208d", "7216a45fa14e808f", "7266f99f18a9c6d0", "72ff07d97f92a030", "739efd3847dbdf42", "73afc88348f0b4d1", "74ea3536b60d7e37", "75a71f3cce33c5b4", "76133d8c02dcfe6f", "76514b9b5aa1480d", "7669471145ecb149", "76718f02e3a13026", "76c0d0342b0ed6b8", "77794b825529afaa", "77896e714a6529b4", "7868cd30d9558550", "7b1c9f5b086a7900", "7c8fd840955b6870", "7d3bf23e36a4fb24", "7dad641c5676b26b", "7e616005adb9f1ca", "7ee47c53e7c7dd88", "7f4e1820fb3998bc", "7f4f885637b69d2c", "7f821c642f41e09e", "80e1e3814a150d34", "81ec187576e43899", "82b3cb20edf94bd3", "82f7e9d90f5ef5a8", "8379f594a276e153", "83be1f760eb5d79d", "847cffab248e7f99", "84a260f812b7f4c4", "84dfa8221b93710a", "85721423f56a9516", "8577844040597e69", "85830fbf5fd9d9d8", "85b1956a16e1dfe8", "85d404282e6cd555", "8621b62b708f9909", "869a76c2ff872aee", "86c4f2f7860d8143", "870538ec0819f446", "8788904ec8fbf90a", "879bd113162f509b", "87b41c3aded7ccb9", "8819583c7b9aa538", "88c865b76bb5dec2", "88f58c88cef96dd1", "8a56c7d382067237", "8bc02fa8224a4e11", "8bf151dfafdb254a", "8c66bf0643ae47a0", "8d93fee07d3296dc", "8db631640286c482", "8dfd2004b15416d4", "8dfd2ac9934f017e", "8ede945700ce1c1f", "8ef273463b1849ed", "8f3aec9a54f40067", "8fea4d071a909940", "908fdc87319a51a0", "90c3550e22b92218", "912bd135abf69786", "91578b16fe25c691", "91d30bede683d948", "92a47e2f342f51a9", "92cf66447cc92838", "935d55cac21dfecb", "93dca14cd3664534", "941f7730f5c293e6", "944e366cee453839", "953cee8090df4b56", "953e3f2fac57aa06", "95c7a3c890561006", "963e1e8e5b602064", "97bb350e0171f877", "97db4e8f8e5c1231", "987b0ea14fd878a6", "98e8faac9c9500b7", "991455df000244e5", "998291ce5b514d4d", "9a50b528817c23cf", "9ad829d1f30a155b", "9c0f576d074ab38a", "9cecd934be445f77", "9d4976b08163457f", "9e9f4648c041fe4f", "9ec0419eafeddbf2", "9ed761586c6447fd", "9ef4699995133608", "9f2205b18063d652", "9f48fa9da6ff1b2b", "a06d48613c551f83", "a0e69c94df58b1df", "a1f1bc87e0052439", "a1f755d501209188", "a21945785b7d1e0a", "a23cf006909b9f2e", "a2536bfd509710c6", "a35e3ba2328517db", "a3eb3dd2f3c5ec77", "a4282c19104c6587", "a43b826d9bb975d9", "a46269fe789e3cbc", "a4bf9ab7f9f8819b", "a4f077d16f62415f", "a55cf7870e1a6fce", "a5733a361e0486a2", "a5880657abc3c511", "a5fec9a3893ccd7c", "a62c4362ec7e543a", "a7b7c63f5d032569", "a7ed24c501dd3567", "a8c7c460f9ec3d1f", "a8f5c582bdbdc31b", "aa22eed9a4af7fd0", "aa95ee945c3652c1", "aad290abc186da8c", "ab1bde9dbcccc3b6", "ab4943603464ff04", "aea396556a370b62", "af5c5473f117979f", "af7ccae3c060a6d8", "af8d111317c6c813", "b080584502b0fd1f", "b0e629696e8894fa", "b1920525a116c61f", "b1ab4204e722b9ec", "b1ca80a8c1375e92", "b39f3e274da58da2", "b4210ac77ffac7d0", "b434506b779802c7", "b4d5af76c82f1a9a", "b5d47337898dda52", "b60afb566a47949f", "b6593bb35d55ca34", "b704bf3c85c057a1", "b72953f4f35a4fe6", "b7b1679bdbe38c57", "b7d099e275cbb613", "b8999440b6e4e08f", "b8af253df7bd7708", "b9640e4270847f89", "b9a90cace4e75f46", "b9ea748a8d826923", "ba21fd20ea930ffa", "bb461a760dffc6e5", "bb52ef000c4b5a46", "bbfa95e8051258da", "bc740c725e29e365", "bc8a85ba0b23991b", "bca08b4bc1828882", "bcd6d8128d84440e", "bd9c6b1ff829e286", "bdbb404da3973a46", "beb53474a32f2573", "beb763f6df2e80f0", "bebc768f2b17935a", "bf1b4bc8abc94120", "bf7f135924f5edcb", "c077475930cbcd77", "c0797f1a1ca4d0fd", "c07abda89003ab76", "c0a83fea229a4be1", "c2111f7db1860524", "c25566cd4f5991d4", "c314014ca6f57e5a", "c3889c59bc9cd792", "c4e2496f8f242084", "c51954a3eb1f859e", "c58db9c71cbd6128", "c5bcd27f74cb7e11", "c614a394d6b9803b", "c620deb843142333", "c66e1e4df955f449", "c683609cd3f6db17", "c7a5c3fafe351878", "c8dac887666b11a5", "c902f105fbc34939", "c926d3611534ad3c", "c93cf5d4aa52b57b", "c972b3c4899c53c7", "ca16379105f901c4", "ca54a5358395758b", "ca7f311b2a612b9c", "caaa8adb15e02228", "cb10e4106ee90884", "cb519b1ba4bb2f6e", "cb81c48b43f32d16", "cba2a65b893638f5", "cbd2b6686f99e35c", "cc168d17b4579a3e", "cc34a6796d3799d9", "ccbdcd7bd88c4c38", "cce3e21ebf1c08fd", "cd5dfffdecbd1058", "cdd2c8e8d2d12ca1", "cde9a78e62c9b29c", "cdfdb26c6ce1c8ba", "ce07e1fa6dfb577d", "ce36bf0ebc5b1483", "d068e49de1534f37", "d17a157ae820e9ec", "d1ab8bdc915cd49a", "d1b8ad3bd554e82d", "d2058a64727ebbe1", "d26de61bbd4b7950", "d3611b12a01a13be", "d3aa47b03c1ed598", "d41963cd6cfc1f1a", "d436ba5c1f6e214e", "d4aec0a90d17da29", "d4daa1ea2bd7232d", "d572372457474d8b", "d5c3087d5e86af43", "d5de13602c6e3e0a", "d78367d60d621325", "d7f36b07028d9a9e", "d858d1c7d0d5d701", "d92ef010d78d7962", "da22ed7fd86f2918", "db380a843a04daae", "dbdecec9db5eb9c4", "dc0490d020ffae31", "dc37b5ee24f0c555", "dc49b2092be07c89", "dc564efcf4b321a8", "dcc3fdbc7ba3b3e4", "dd16ebae8a5db3b7", "dd4b34af662876df", "ddf844c464a3723e", "de5eb6804a4f3051", "ded6ece79184b5c9", "dfab313bd7fe1a18", "dfef5a8fac07fd69", "dff6680afb219560", "e0f25b38ca288f4e", "e20b8505f62e7a13", "e245e4d27f522472", "e2498a7f4e5d2d34", "e322aa7f606b063c", "e33cc0a35aef6097", "e46f80c85ec6d476", "e4f35fa8de169ecf", "e4ff14b08940d637", "e57c232f78352e33", "e63d2370c3a47e9d", "e655068a59649d4b", "e6e1131729685984", "e71d7ea3b75593c2", "e767c71f2fb5590b", "e7c9f67bf58d1d0f", "e844ba5d946a5fbd", "e934ad065e008542", "ea0a5313e1a6ccf7", "ea346e36e8c777b3", "ea35eb440768e937", "ea36d4ece0be8437", "ea9d4614c7b98ba7", "eaabe6d4c78fa0aa", "ee0d389f38492a18", "ee17a4c1ce99d209", "ee2c323745cd158c", "eed7d3430d81b096", "f00959bee87a3c33", "f0fae7d07b1b1156", "f136633ca4d0a951", "f13e887faf8a8d27", "f24bfc49b3e418b9", "f301d0ad5d24a8da", "f314c8d23a296f96", "f49119857936ab19", "f4bee4e996ec8fb8", "f53fd0d3f803f5c3", "f5505b6104de94e3", "f5748412ad70e204", "f63bac21a7b21ac9", "f72f3eb08e7570a3", "f82f66b673305933", "f84f086944a0805b", "f8bddf44853c0046", "f8bfa1ce1e349271", "f8d7be254477f6c4", "f96af7742f8f43e9", "f97022898e43c5b0", "f98e2dbeecbb7f9b", "f9cf56f4a6d2564a", "fa174ee85e6cd6ff", "fa999233c97eed95", "fb8f3d595ee0a0e9", "fc84503ef8234b79", "fc9fb00ebbfeffe5", "fd0a96fc6b033bae", "fe7d3bed98395bd0", "ff4b20fb654cd5f2"];const FREE=false;
+async function sha(t){const b=new TextEncoder().encode(t);const d=await crypto.subtle.digest("SHA-256",b);return [...new Uint8Array(d)].map(x=>x.toString(16).padStart(2,"0")).join("").slice(0,16);}
+let acc=null;try{acc=JSON.parse(localStorage.getItem("rq_access")||"null");}catch(e){}
+(async()=>{if(FREE)return;let ok=false;try{ok=!!(acc&&acc.code&&HS.includes(await sha(acc.code.trim().toUpperCase())));}catch(e){ok=false;}if(!ok)location.replace("../games.html#locked");})();})();
+</script>
+<header class="bar">
+ <h1>📐 مختبر الزوايا</h1>
+ <button class="ghost" id="helpbtn" type="button">❓ كيف ألعب؟</button>
+ <button id="chalbtn" type="button">🎯 وضع التحدي</button>
+ <a href="../games.html">🎮 الألعاب</a> <a href="../games.html">🎮 الألعاب</a> <a href="../games.html">🎮 الألعاب</a> <a href="../games.html">🎮 الألعاب</a> <a href="../games.html">🎮 الألعاب</a> <a href="../games.html">🎮 الألعاب</a> <a href="../games.html">🎮 الألعاب</a> <a href="../games.html">🎮 الألعاب</a> <a href="../games.html">🎮 الألعاب</a> <a href="../index.html">🏠 المنصة</a>
+</header>
+<main>
+ <section class="panel stage" id="stage">
+  <svg id="sv1" viewBox="0 0 600 320" role="img" aria-label="مستقيمان متوازيان وقاطع"></svg>
+  <svg id="sv2" viewBox="0 0 600 400" role="img" aria-label="المثلث والمضلع المنتظم" style="display:none"></svg>
+  <div class="hint" id="shint"></div>
+ </section>
+ <aside class="panel ctl">
+  <div id="controls">
+   <div class="seg"><button id="m1" type="button" class="on">∥ متوازيان وقاطع</button><button id="m2" type="button">△ المثلث والمضلع</button></div>
+   <div id="c1">
+    <h2>زاوية القاطع مع المستقيمين</h2>
+    <div class="row"><label for="thr">الزاوية</label><input type="range" id="thr" min="20" max="160" step="5" value="60"><span class="val" id="thv">٦٠°</span></div>
+    <div class="row"><button class="btn sun" id="eqbtn" type="button">🎨 أظهر كل المتساويات</button><button class="btn alt" id="clrbtn" type="button">إلغاء التحديد</button></div>
+    <div class="readout" id="r1"></div>
+   </div>
+   <div id="c2" style="display:none">
+    <h2>المثلث أ ب ج</h2>
+    <div class="readout" id="r2"></div>
+    <div class="row"><button class="btn sun" id="extbtn" type="button">أظهر الزاوية الخارجية</button></div>
+    <h2>المضلع المنتظم</h2>
+    <div class="row"><label for="nr">عدد الأضلاع</label><input type="range" id="nr" min="3" max="10" step="1" value="5"><span class="val" id="nv">٥</span></div>
+    <div class="readout" id="r3"></div>
+   </div>
+  </div>
+  <div id="chal">
+   <div class="prog" id="cprog"></div>
+   <div class="q" id="cq"></div>
+   <div class="opts" id="copts"></div>
+   <div class="fb" id="cfb"></div>
+   <div class="row"><button class="btn alt" id="cnext" type="button" disabled>السؤال التالي ←</button><button class="btn alt" id="cexit" type="button">↩ العودة للمحاكاة</button></div>
+  </div>
+ </aside>
+</main>
+<footer>منصة بنفسجو · إعداد وتصميم أ. رناد حماد</footer>
+<div class="ov" id="help"><div class="dlg"><button class="x" id="helpx" type="button">✕</button><h3>كيف ألعب؟</h3>
+ <ol><li>اختر الوضع من الأعلى: «متوازيان وقاطع» أو «المثلث والمضلع».</li><li>اسحب المقبض الأصفر لتدوير القاطع، ثم اضغط على زاويتين لتعرف اسم العلاقة بينهما (متناظرتان، متبادلتان، متحالفتان…) وهل هما متساويتان أم مجموعهما ١٨٠°.</li><li>اسحب رؤوس المثلث لترى أن مجموع زواياه ١٨٠° دائمًا وأن الزاوية الخارجية تساوي مجموع الداخليتين البعيدتين، وغيّر عدد أضلاع المضلع لتكتشف قاعدة (ن − ٢) × ١٨٠.</li><li>جرّب «وضع التحدي» لحل ٥ أسئلة بطريقة القدرات السريعة: مع متوازيين كل زاوية إما تساوي الحادة أو تكمّلها إلى ١٨٠°.</li></ol>
+</div></div>
+<script>
+/* ===== أدوات مشتركة — لا تعدّلها ===== */
+const D=n=>String(n).replace(/[0-9]/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]);           // أرقام هندية
+const $=s=>document.querySelector(s);
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+$('#helpbtn').onclick=()=>$('#help').classList.add('on');$('#helpx').onclick=()=>$('#help').classList.remove('on');$('#help').onclick=e=>{if(e.target.id==='help')$('#help').classList.remove('on');};
+/* محرّك التحدي: مرّر دالة genQuestion() تُرجع {q:'نص السؤال', opts:[4 نصوص], ans:index, why:'شرح من سطر'} واختياريًا apply(state) لتحديث اللوحة */
+const CH={n:0,score:0,gen:null,onEnter:null,onExit:null};
+function startChallenge(gen,onEnter,onExit){CH.gen=gen;CH.onEnter=onEnter;CH.onExit=onExit;CH.n=0;CH.score=0;$('#controls').style.display='none';$('#chal').classList.add('on');onEnter&&onEnter();nextQ();}
+function nextQ(){if(CH.n>=5){return finishChallenge();}const it=CH.gen();CH.cur=it;CH.n++;$('#cprog').textContent='السؤال '+D(CH.n)+' من ٥ · النقاط '+D(CH.score);$('#cq').innerHTML=it.q;$('#cfb').textContent='';$('#cnext').disabled=true;
+ $('#copts').innerHTML=it.opts.map((o,i)=>'<button class="opt" data-i="'+i+'"><span class="l">'+'أبجد'[i]+'</span>'+o+'</button>').join('');
+ document.querySelectorAll('#copts .opt').forEach(b=>b.onclick=()=>{if(CH.locked)return;CH.locked=true;const i=+b.dataset.i;document.querySelectorAll('#copts .opt').forEach(x=>{x.disabled=true;if(+x.dataset.i===it.ans)x.classList.add('right');});
+  if(i===it.ans){CH.score++;$('#cfb').innerHTML='<span class="ok">✓ أحسنت!</span> '+it.why;}else{b.classList.add('wrong');$('#cfb').innerHTML='<span class="bad">✗ الإجابة الصحيحة: '+it.opts[it.ans]+'</span> · '+it.why;}
+  $('#cnext').disabled=false;$('#cnext').textContent=CH.n>=5?'النتيجة 🏁':'السؤال التالي ←';});
+ CH.locked=false;}
+function finishChallenge(){const s=CH.score,st='★'.repeat(s)+'☆'.repeat(5-s),msg=s===5?'ممتاز! علامة كاملة 🎉':s>=4?'رائع، قريب جدًا من الكمال 👏':s>=3?'جيد، جرّب جولة أخرى لتثبيت الفكرة 💪':'لا بأس، العب بالمحاكاة قليلًا ثم أعد التحدي 🔁';
+ $('#cq').innerHTML='<div class="final">النتيجة: '+D(s)+' من ٥<div class="stars">'+st+'</div><div style="font-size:18px;margin-top:6px">'+msg+'</div></div>';$('#copts').innerHTML='';$('#cfb').textContent='';$('#cprog').textContent='';
+ $('#cnext').disabled=false;$('#cnext').textContent='🔄 جولة جديدة';}
+$('#cnext').onclick=()=>{if(CH.n>=5&&$('#cnext').textContent.includes('جولة')){CH.n=0;CH.score=0;nextQ();}else nextQ();};
+$('#cexit').onclick=()=>{$('#chal').classList.remove('on');$('#controls').style.display='';CH.onExit&&CH.onExit();};
+$('#chalbtn').onclick=()=>{ if(typeof SIM_genQuestion==='function') startChallenge(SIM_genQuestion, window.SIM_onChallengeEnter, window.SIM_onChallengeExit); };
+/* ===== مختبر الزوايا ===== */
+const SV1=$('#sv1'),SV2=$('#sv2');
+const PAL=['#FFD6A5','#CAFFBF','#9BF6FF','#BDB2FF','#FFC6FF','#FDFFB6','#A0C4FF','#FFADAD'];
+const NAVY='#0B6E8F',VIO='#5B7FE6',BAD='#C0392B';
+const S={mode:1,th:60,sel:[],allEq:false,tri:[{x:60,y:340},{x:290,y:340},{x:150,y:110}],ext:false,n:5};
+let CHQ=null,SNAP=null;
+const D2R=Math.PI/180,R2D=180/Math.PI;
+const fmt=x=>Number.isInteger(x)?D(x):D((Math.round(x*10)/10).toFixed(1)).replace('.','٫');
+const deg=x=>fmt(x)+'°';
+const L=x=>'<span dir="ltr">'+x+'</span>';
+const degH=x=>L(deg(x));
+const N='<bdi>ن</bdi>';
+const f1=x=>(+x).toFixed(1);
+const pt=(vx,vy,r,a)=>[vx+r*Math.cos(a*D2R),vy-r*Math.sin(a*D2R)];
+const norm=a=>((a%360)+360)%360;
+function sector(vx,vy,r,a0,a1){const d=norm(a1-a0);const [x0,y0]=pt(vx,vy,r,a0),[x1,y1]=pt(vx,vy,r,a1);return 'M'+f1(vx)+' '+f1(vy)+'L'+f1(x0)+' '+f1(y0)+'A'+r+' '+r+' 0 '+(d>180?1:0)+' 0 '+f1(x1)+' '+f1(y1)+'Z';}
+function small(aU,aW){const d=norm(aW-aU);return d<=180?[aU,aW,d]:[aW,aU,360-d];}
+const lblDist=(half,min)=>Math.min(120,Math.max(min,15/Math.sin(Math.max(half,2)*D2R)));
+function txt(x,y,cls,s,color){const q=s==='؟';return '<text x="'+f1(x)+'" y="'+f1(y+(q?7:5))+'" class="'+cls+(q?' qm':'')+'"'+(/س/.test(s)?'':' direction="ltr"')+(color&&!q?' style="fill:'+color+'"':'')+'>'+s+'</text>';}
+const dirTo=(a,b)=>Math.atan2(-(b.y-a.y),b.x-a.x)*R2D;
+
+/* --- الوضع ١: متوازيان وقاطع --- */
+const POS=['UL','UR','LL','LR'],ANG=[];for(let v=0;v<2;v++)for(const p of POS)ANG.push({v,p});
+const rangeOf=(p,th)=>p==='UR'?[0,th]:p==='UL'?[th,180]:p==='LL'?[180,180+th]:[180+th,360];
+const meas=(i,th)=>(ANG[i].p==='UR'||ANG[i].p==='LL')?th:180-th;
+function relation(i,j){const a=ANG[i],b=ANG[j],sa=a.p[1],sb=b.p[1];if(a.v===b.v)return(sa!==sb&&a.p[0]!==b.p[0])?'vert':'linear';const inA=(a.v===0)===(a.p[0]==='L'),inB=(b.v===0)===(b.p[0]==='L');if(a.p===b.p)return'corr';if(sa===sb)return(inA&&inB)?'coint':(!inA&&!inB)?'coext':'none';return(inA&&inB)?'altint':(!inA&&!inB)?'altext':'none';}
+const REL={corr:{n:'متناظرتان',eq:1},altint:{n:'متبادلتان داخليًا',eq:1},altext:{n:'متبادلتان خارجيًا',eq:1},coint:{n:'متحالفتان (داخليتان من جهة واحدة)',eq:0},coext:{n:'خارجيتان من جهة واحدة',eq:0},vert:{n:'متقابلتان بالرأس',eq:1},linear:{n:'متجاورتان على مستقيم',eq:0},none:{n:'ليستا زوجًا مُسمّى، لكن إحداهما حادة والأخرى منفرجة',eq:0}};
+function renderPar(){const th=S.th,k=Math.cos(th*D2R)/Math.sin(th*D2R),cx=300;
+ const V=[[cx+55*k,110],[cx-55*k,220]],T=[[cx+100*k,65],[cx-100*k,265]];
+ let h='<line x1="12" y1="110" x2="592" y2="110" class="pl"/><line x1="12" y1="220" x2="592" y2="220" class="pl"/><path d="M578 104l9 6-9 6" class="pm"/><path d="M578 214l9 6-9 6" class="pm"/><text x="560" y="133" class="lb">ل١</text><text x="560" y="209" class="lb">ل٢</text>';
+ h+='<line x1="'+f1(T[0][0])+'" y1="65" x2="'+f1(T[1][0])+'" y2="265" class="tr"/><text x="'+f1(T[1][0]+(k>=0?16:-16))+'" y="274" class="lb">م</text>';
+ ANG.forEach((a,i)=>{const [vx,vy]=V[a.v],[a0,a1]=rangeOf(a.p,th),m=meas(i,th),half=(a1-a0)/2,mid=a0+half,d0=lblDist(half,34);
+  const sel=S.sel.includes(i)||!!(CHQ&&CHQ.hi&&CHQ.hi.includes(i));
+  let fill=PAL[i],op=.8,sw=1,tc='#10303B';
+  if(S.allEq&&!CHQ)fill=m<90?'#C9F3EE':m>90?'#B39DDB':'#A5D6A7';
+  if(sel){fill=VIO;op=.8;sw=2.5;tc=VIO;}
+  const label=CHQ?(CHQ.labels[i]||''):deg(m);
+  const [nx,ny]=pt(vx,vy,d0,mid),[mx,my]=pt(vx,vy,d0+25,mid);
+  h+='<g class="ang" data-i="'+i+'"><path d="'+sector(vx,vy,48,a0,a1)+'" fill="transparent"/><path d="'+sector(vx,vy,22,a0,a1)+'" fill="'+fill+'" fill-opacity="'+op+'" stroke="'+NAVY+'" stroke-width="'+sw+'"/><circle cx="'+f1(nx)+'" cy="'+f1(ny)+'" r="10" fill="'+(sel?VIO:'#fff')+'" stroke="'+NAVY+'"/><text x="'+f1(nx)+'" y="'+f1(ny+4)+'" class="num" style="fill:'+(sel?'#fff':NAVY)+'">'+D(i+1)+'</text>'+(label?txt(mx,my,'ms',label,tc):'')+'</g>';});
+ const hx=T[0][0];
+ h+='<g class="hd" id="hd"><circle cx="'+f1(hx)+'" cy="65" r="26" fill="transparent"/><circle cx="'+f1(hx)+'" cy="65" r="13" fill="#C9F3EE" stroke="'+NAVY+'" stroke-width="2"/><text x="'+f1(hx)+'" y="70" class="num" style="fill:'+NAVY+'">↻</text>'+(CHQ?'':'<text x="'+f1(hx)+'" y="44" class="lb">اسحب</text>')+'</g>';
+ SV1.innerHTML=h;
+ $('#thr').value=th;$('#thv').innerHTML=degH(th);
+ const ac=Math.min(th,180-th),ob=180-ac;
+ let t=th===90?'كل الزوايا الثماني قائمة = '+degH(90):'الزوايا الحادة الأربع = '+degH(ac)+' · المنفرجة الأربع = '+degH(ob)+' · حادة + منفرجة = '+degH(180);
+ if(S.sel.length===2){const [i,j]=S.sel,R=REL[relation(i,j)],mi=meas(i,th),mj=meas(j,th);t+='<br>∠'+D(i+1)+' و∠'+D(j+1)+': <b>'+R.n+'</b> ← '+(R.eq?'متساويتان: '+L(deg(mi)+' = '+deg(mj)):'مجموعهما '+degH(180)+': '+L(deg(mi)+' + '+deg(mj)+' = '+deg(180)));}
+ else if(S.sel.length===1)t+='<br>∠'+D(S.sel[0]+1)+' محدّدة — اضغط على زاوية أخرى.';
+ else t+='<br><span class="mu">اضغط على زاويتين في الرسم لمعرفة العلاقة بينهما.</span>';
+ if(S.allEq)t+='<br><span class="sw" style="background:#C9F3EE"></span>حادة <span class="sw" style="background:#B39DDB"></span>منفرجة — طريقة القدرات: مع متوازيين كل زاوية إما تساوي الحادة أو تكمّلها إلى '+degH(180)+'.';
+ $('#r1').innerHTML=t;$('#eqbtn').textContent=S.allEq?'🎨 أخفِ التلوين':'🎨 أظهر كل المتساويات';}
+
+/* --- الوضع ٢: المثلث والمضلع --- */
+function triAngles(T){const f=i=>{const v=T[i],p=T[(i+1)%3],q=T[(i+2)%3],u=[p.x-v.x,p.y-v.y],w=[q.x-v.x,q.y-v.y];return Math.acos(Math.max(-1,Math.min(1,(u[0]*w[0]+u[1]*w[1])/(Math.hypot(u[0],u[1])*Math.hypot(w[0],w[1])))))*R2D;};return [f(0),f(1),f(2)];}
+function triRounded(){const [A,B]=triAngles(S.tri),a=Math.round(A),b=Math.round(B);return [a,b,180-a-b];}
+function triFromAngles(a,b){const ta=Math.tan(a*D2R),tb=Math.tan(b*D2R),x=tb/(ta+tb),y=x*ta,P=[[0,0],[1,0],[x,y]];const xs=P.map(p=>p[0]),ys=P.map(p=>p[1]),mnx=Math.min(...xs),mxx=Math.max(...xs),mny=Math.min(...ys),mxy=Math.max(...ys);const sc=Math.min(260/(mxx-mnx),300/(mxy-mny)),w=(mxx-mnx)*sc,hh=(mxy-mny)*sc,ox=40+(260-w)/2,oy=50+(300-hh)/2;S.tri=P.map(p=>({x:Math.round(ox+(p[0]-mnx)*sc),y:Math.round(oy+(mxy-p[1])*sc)}));}
+function renderGeo(){const T=S.tri,R=triRounded(),NM=['أ','ب','ج'],lab=CHQ&&CHQ.tri?CHQ.tri:null,plab=CHQ&&CHQ.poly?CHQ.poly:null;
+ let h='<line x1="360" y1="20" x2="360" y2="380" stroke="#CDE9F0" stroke-dasharray="4 4"/>';
+ h+='<g opacity="'+(plab?.3:1)+'"><polygon points="'+T.map(p=>p.x+','+p.y).join(' ')+'" fill="#E6F6F9" stroke="'+NAVY+'" stroke-width="2.5" stroke-linejoin="round"/>';
+ if(S.ext){const A=T[0],B=T[1],C=T[2];const cand=[[A,C],[C,A]].map(([P,Q])=>{const len=Math.hypot(B.x-P.x,B.y-P.y),u=[(B.x-P.x)/len,(B.y-P.y)/len];let Lx=60;if(u[0]>0)Lx=Math.min(Lx,(356-B.x)/u[0]);if(u[0]<0)Lx=Math.min(Lx,(12-B.x)/u[0]);if(u[1]>0)Lx=Math.min(Lx,(388-B.y)/u[1]);if(u[1]<0)Lx=Math.min(Lx,(12-B.y)/u[1]);return{u,Lx,Q};});const best=cand[0].Lx>=cand[1].Lx?cand[0]:cand[1],u=best.u,Lx=Math.max(best.Lx,20);
+  const E=[B.x+u[0]*Lx,B.y+u[1]*Lx],aU=Math.atan2(-u[1],u[0])*R2D,[a0,a1,dd]=small(aU,dirTo(B,best.Q)),half=dd/2,d=lblDist(half,52),[lx,ly]=pt(B.x,B.y,d,a0+half);
+  h+='<line x1="'+B.x+'" y1="'+B.y+'" x2="'+f1(E[0])+'" y2="'+f1(E[1])+'" stroke="'+BAD+'" stroke-width="2.5" stroke-dasharray="6 5"/><path d="'+sector(B.x,B.y,38,a0,a1)+'" fill="'+BAD+'" fill-opacity=".35" stroke="'+BAD+'" stroke-width="1.5"/>';
+  const s=lab?(lab.ext||''):deg(180-R[1]);if(s)h+=txt(lx,ly,'ms',s,BAD);}
+ T.forEach((v,i)=>{const [a0,a1,dd]=small(dirTo(v,T[(i+1)%3]),dirTo(v,T[(i+2)%3])),half=dd/2,d=lblDist(half,46),[lx,ly]=pt(v.x,v.y,d,a0+half);
+  h+='<path d="'+sector(v.x,v.y,30,a0,a1)+'" fill="'+PAL[i*2+1]+'" fill-opacity=".9" stroke="'+NAVY+'"/>';const s=lab?(lab.l[i]||''):deg(R[i]);if(s)h+=txt(lx,ly,'ms',s);});
+ T.forEach((v,i)=>{h+='<g class="vx" data-v="'+i+'"><circle cx="'+v.x+'" cy="'+v.y+'" r="28" fill="transparent"/><circle cx="'+v.x+'" cy="'+v.y+'" r="13" fill="'+NAVY+'" stroke="#fff" stroke-width="2"/><text x="'+v.x+'" y="'+(v.y+5)+'" class="num" style="fill:#fff">'+NM[i]+'</text></g>';});
+ h+='</g>';
+ const n=S.n,cx=492,cy=210,r=85,P=[];for(let q=0;q<n;q++){const [px,py]=pt(cx,cy,r,90+360*q/n);P.push({x:px,y:py});}
+ const inner=(n-2)*180/n,outer=360/n,sum=(n-2)*180;
+ h+='<g opacity="'+(lab?.3:1)+'"><polygon points="'+P.map(p=>f1(p.x)+','+f1(p.y)).join(' ')+'" fill="#EAF4FF" stroke="'+VIO+'" stroke-width="2.5" stroke-linejoin="round"/>';
+ {const v=P[0],[a0,a1,dd]=small(dirTo(v,P[1]),dirTo(v,P[n-1])),half=dd/2,d=lblDist(half,44),[lx,ly]=pt(v.x,v.y,d,a0+half);
+  h+='<path d="'+sector(v.x,v.y,28,a0,a1)+'" fill="#C9F3EE" fill-opacity=".9" stroke="'+NAVY+'"/>';const s=plab?(plab.inner||''):deg(inner);if(s)h+=txt(lx,ly,'ms',s);}
+ {const v0=P[0],v1=P[1],v2=P[2],len=Math.hypot(v1.x-v0.x,v1.y-v0.y),u=[(v1.x-v0.x)/len,(v1.y-v0.y)/len],E=[v1.x+40*u[0],v1.y+40*u[1]],aU=Math.atan2(-u[1],u[0])*R2D,[a0,a1,dd]=small(aU,dirTo(v1,v2)),half=dd/2,d=lblDist(half,40),[lx,ly]=pt(v1.x,v1.y,d,a0+half);
+  h+='<line x1="'+f1(v1.x)+'" y1="'+f1(v1.y)+'" x2="'+f1(E[0])+'" y2="'+f1(E[1])+'" stroke="'+BAD+'" stroke-width="2.5" stroke-dasharray="6 5"/><path d="'+sector(v1.x,v1.y,26,a0,a1)+'" fill="'+BAD+'" fill-opacity=".35" stroke="'+BAD+'" stroke-width="1.5"/>';const s=plab?(plab.outer||''):deg(outer);if(s)h+=txt(lx,ly,'ms',s,BAD);}
+ P.forEach(p=>h+='<circle cx="'+f1(p.x)+'" cy="'+f1(p.y)+'" r="4" fill="'+VIO+'"/>');
+ h+='<text x="'+cx+'" y="374" class="tt">مضلع منتظم · ن = '+D(n)+'</text></g>';
+ SV2.innerHTML=h;
+ $('#nr').value=n;$('#nv').textContent=D(n);
+ let t='∠أ = '+degH(R[0])+' · ∠ب = '+degH(R[1])+' · ∠ج = '+degH(R[2])+'<br>المجموع: '+L(D(R[0])+' + '+D(R[1])+' + '+D(R[2])+' = '+deg(180))+' <span class="ok">✓ دائمًا</span>';
+ if(S.ext)t+='<br><span class="bad">الزاوية الخارجية عند ب</span> = '+L('١٨٠° − '+deg(R[1]))+' = <b>'+degH(180-R[1])+'</b> = ∠أ + ∠ج = '+L(D(R[0])+' + '+D(R[2]));
+ $('#r2').innerHTML=t;$('#extbtn').textContent=S.ext?'أخفِ الزاوية الخارجية':'أظهر الزاوية الخارجية';
+ $('#r3').innerHTML='مجموع الزوايا الداخلية = '+L('('+N+' − ٢) × ١٨٠')+' = '+L('('+D(n)+' − ٢) × ١٨٠')+' = <b>'+degH(sum)+'</b><br>كل زاوية داخلية = '+L(D(sum)+' ÷ '+D(n))+' = <b>'+degH(inner)+'</b><br>الزاوية الخارجية = '+L('٣٦٠ ÷ '+D(n))+' = <b>'+degH(outer)+'</b>';}
+
+/* --- الأوضاع والأحداث --- */
+function setMode(m){S.mode=m;SV1.style.display=m===1?'':'none';SV2.style.display=m===2?'':'none';$('#c1').style.display=m===1?'':'none';$('#c2').style.display=m===2?'':'none';$('#m1').classList.toggle('on',m===1);$('#m2').classList.toggle('on',m===2);
+ $('#shint').textContent=CHQ?'انظر إلى الشكل جيدًا ثم اختر الإجابة.':m===1?'اسحب المقبض الأصفر لتدوير القاطع · اضغط على زاويتين لمعرفة العلاقة بينهما':'اسحب الرؤوس أ، ب، ج لتغيير المثلث · غيّر عدد أضلاع المضلع من المنزلق';render();}
+function render(){if(S.mode===1)renderPar();else renderGeo();}
+const svgPt=(svg,e)=>{const r=svg.getBoundingClientRect(),vb=svg.viewBox.baseVal;return[(e.clientX-r.left)*vb.width/r.width,(e.clientY-r.top)*vb.height/r.height];};
+let drag1=false,drag2=-1;
+SV1.addEventListener('pointerdown',e=>{if(e.target.closest('#hd')){if(CHQ)return;drag1=true;SV1.setPointerCapture(e.pointerId);e.preventDefault();return;}const g=e.target.closest('.ang');if(g&&!CHQ){const i=+g.dataset.i,k=S.sel.indexOf(i);if(k>=0)S.sel.splice(k,1);else{S.sel.push(i);if(S.sel.length>2)S.sel=[i];}renderPar();}});
+SV1.addEventListener('pointermove',e=>{if(!drag1)return;const [x,y]=svgPt(SV1,e);let a=Math.atan2(165-y,x-300)*R2D;if(a<0)a+=180;a=Math.max(20,Math.min(160,Math.round(a/5)*5));if(a!==S.th){S.th=a;renderPar();}});
+const end1=()=>{drag1=false;};SV1.addEventListener('pointerup',end1);SV1.addEventListener('pointercancel',end1);
+SV2.addEventListener('pointerdown',e=>{if(CHQ)return;const g=e.target.closest('.vx');if(g){drag2=+g.dataset.v;SV2.setPointerCapture(e.pointerId);e.preventDefault();}});
+SV2.addEventListener('pointermove',e=>{if(drag2<0)return;let [x,y]=svgPt(SV2,e);x=Math.round(Math.max(30,Math.min(335,x)));y=Math.round(Math.max(40,Math.min(372,y)));const T=S.tri.map(p=>({x:p.x,y:p.y}));T[drag2]={x,y};const cr=(T[1].x-T[0].x)*(T[2].y-T[0].y)-(T[1].y-T[0].y)*(T[2].x-T[0].x);if(Math.abs(cr)<7000)return;S.tri=T;renderGeo();});
+const end2=()=>{drag2=-1;};SV2.addEventListener('pointerup',end2);SV2.addEventListener('pointercancel',end2);
+$('#thr').oninput=e=>{S.th=+e.target.value;renderPar();};
+$('#nr').oninput=e=>{S.n=+e.target.value;renderGeo();};
+$('#m1').onclick=()=>setMode(1);$('#m2').onclick=()=>setMode(2);
+$('#eqbtn').onclick=()=>{S.allEq=!S.allEq;renderPar();};
+$('#clrbtn').onclick=()=>{S.sel=[];renderPar();};
+$('#extbtn').onclick=()=>{S.ext=!S.ext;renderGeo();};
+
+/* --- وضع التحدي --- */
+function mkOpts(ans,cands,fm){const set=[ans];for(const c of cands){if(set.length>=4)break;if(c==null||!isFinite(c)||c<=0||!Number.isInteger(c)||set.includes(c))continue;set.push(c);}
+ let k=5;while(set.length<4){const c=ans+(set.length%2?k:-k);if(c>0&&!set.includes(c))set.push(c);k+=5;}
+ const idx=shuffle([0,1,2,3]);return{opts:idx.map(i=>fm(set[i])),ans:idx.indexOf(0)};}
+function go1(th,labels,hi){S.th=th;S.sel=[];S.allEq=false;CHQ={mode:1,labels,hi};setMode(1);}
+function go2(o){CHQ=Object.assign({mode:2},o);setMode(2);}
+function qPar(){const ths=[];for(let t=20;t<=160;t+=5)if(t!==90)ths.push(t);const th=ths[rnd(0,ths.length-1)],i=rnd(0,7);let j=rnd(0,7);while(j===i)j=rnd(0,7);
+ const R=REL[relation(i,j)],mi=meas(i,th),mj=meas(j,th);go1(th,{[i]:deg(mi),[j]:'؟'},[i,j]);
+ const o=mkOpts(mj,shuffle([180-mj,mi<90?90-mi:mi-90,mi+90<180?mi+90:null]).concat([mj+10,mj-10,mj+20]),degH);
+ return{q:'في الشكل، ل١ ∥ ل٢. إذا كان قياس ∠'+D(i+1)+' = '+degH(mi)+'، فما قياس ∠'+D(j+1)+'؟',opts:o.opts,ans:o.ans,why:'طريقة القدرات: ∠'+D(i+1)+' و∠'+D(j+1)+' '+R.n+' ← '+(R.eq?'متساويتان ← '+degH(mj):'مجموعهما '+degH(180)+' ← '+L('١٨٠ − '+D(mi)+' = '+D(mj)))};}
+function qTri(){let a,b;do{a=5*rnd(5,22);b=5*rnd(5,22);}while(a+b>160);const ans=180-a-b;triFromAngles(a,b);S.ext=false;go2({tri:{l:[deg(a),deg(b),'؟'],ext:null}});
+ const o=mkOpts(ans,shuffle([a+b,180-a,180-b]).concat([ans+10,ans-10,ans+15]),degH);
+ return{q:'مثلث فيه زاويتان قياسهما '+degH(a)+' و'+degH(b)+'. ما قياس الزاوية الثالثة؟',opts:o.opts,ans:o.ans,why:'طريقة القدرات: مجموع زوايا المثلث '+degH(180)+' ← '+L('١٨٠ − ('+D(a)+' + '+D(b)+') = '+D(ans))};}
+function qExt(){let a,b;do{a=5*rnd(5,20);b=5*rnd(5,20);}while(a+b>150||a===b);const e=a+b;triFromAngles(a,180-e);S.ext=true;
+ if(Math.random()<.5){go2({tri:{l:[deg(a),'',deg(b)],ext:'؟'}});const o=mkOpts(e,shuffle([180-e,180-a,180-b,Math.abs(a-b)]).concat([e+10,e-10]),degH);
+  return{q:'في المثلث أ ب ج: ∠أ = '+degH(a)+' و∠ج = '+degH(b)+'. ما قياس الزاوية الخارجية عند ب؟',opts:o.opts,ans:o.ans,why:'طريقة القدرات: الزاوية الخارجية = مجموع الداخليتين البعيدتين ← '+L(D(a)+' + '+D(b)+' = '+D(e))};}
+ go2({tri:{l:[deg(a),'','؟'],ext:deg(e)}});const o=mkOpts(b,shuffle([180-e,e+a,180-a,180-e-a]).concat([b+10,b-10]),degH);
+ return{q:'الزاوية الخارجية عند ب في المثلث أ ب ج قياسها '+degH(e)+'، و∠أ = '+degH(a)+'. ما قياس ∠ج؟',opts:o.opts,ans:o.ans,why:'طريقة القدرات: الخارجية = ∠أ + ∠ج ← '+L(D(e)+' − '+D(a)+' = '+D(b))};}
+function qPolySum(){const n=rnd(4,10),ans=(n-2)*180;S.n=n;S.ext=false;go2({poly:{inner:null,outer:null}});
+ const o=mkOpts(ans,shuffle([(n-1)*180,n*180,(n-3)*180]).concat([(n-2)*90,ans+90]),degH);
+ return{q:'ما مجموع قياسات الزوايا الداخلية لمضلع عدد أضلاعه '+D(n)+'؟',opts:o.opts,ans:o.ans,why:'طريقة القدرات: '+L('('+N+' − ٢) × ١٨٠ = ('+D(n)+' − ٢) × ١٨٠ = '+D(ans))};}
+const NS=[3,4,5,6,8,9,10];
+function qPolyAng(){const n=NS[rnd(0,NS.length-1)],inner=(n-2)*180/n,outer=360/n;S.n=n;S.ext=false;
+ if(Math.random()<.55){go2({poly:{inner:'؟',outer:null}});const o=mkOpts(inner,shuffle([outer,(n-2)*180,180-outer/2]).concat([inner+10,inner-10]),degH);
+  return{q:'ما قياس كل زاوية داخلية في مضلع منتظم عدد أضلاعه '+D(n)+'؟',opts:o.opts,ans:o.ans,why:'طريقة القدرات: الخارجية = '+L('٣٦٠ ÷ '+D(n)+' = '+D(outer))+' ← الداخلية = '+L('١٨٠ − '+D(outer)+' = '+D(inner))};}
+ go2({poly:{inner:null,outer:'؟'}});const o=mkOpts(outer,shuffle([inner,(n-2)*180,180/n]).concat([outer+10,outer-10]),degH);
+ return{q:'ما قياس الزاوية الخارجية لمضلع منتظم عدد أضلاعه '+D(n)+'؟',opts:o.opts,ans:o.ans,why:'طريقة القدرات: مجموع الزوايا الخارجية دائمًا '+degH(360)+' ← '+L('٣٦٠ ÷ '+D(n)+' = '+D(outer))};}
+function qAlg(){let a=1,b=2,c=30,x=50;for(let t=0;t<300;t++){const A=rnd(1,4),B=rnd(1,4),C=10*rnd(1,9);if((180-C)%(A+B))continue;const X=(180-C)/(A+B),m1=A*X,m2=B*X+C;if(X<5||m1<20||m1>160||m2<20||m2>160||m1===m2)continue;a=A;b=B;c=C;x=X;break;}
+ const m1=a*x,e1=(a===1?'':D(a))+'س',e2=(b===1?'':D(b))+'س + '+D(c);
+ S.th=m1;S.sel=[];S.allEq=false;CHQ={mode:1,labels:{2:e1,4:e2},hi:[2,4]};setMode(1);
+ const comp=(90-c)>0&&(90-c)%(a+b)===0?(90-c)/(a+b):null;
+ const o=mkOpts(x,shuffle([comp,m1,180-c,(180-c)/(a+b+1)]).concat([x+5,x-5,2*x]),D);
+ return{q:'زاويتان متحالفتان بين متوازيين، قياس الأولى '+e1+' وقياس الثانية ('+e2+'). ما قيمة س؟',opts:o.opts,ans:o.ans,why:'طريقة القدرات: المتحالفتان مجموعهما '+degH(180)+' ← '+D(a+b)+'س + '+D(c)+' = ١٨٠ ← '+D(a+b)+'س = '+D(180-c)+' ← س = '+D(x)};}
+let QQ=[];
+function SIM_genQuestion(){if(!QQ.length)QQ=shuffle([qPar,qPar,qTri,qExt,qPolySum,qPolyAng,qAlg]);return QQ.pop()();}
+window.SIM_onChallengeEnter=()=>{SNAP=JSON.parse(JSON.stringify(S));};
+window.SIM_onChallengeExit=()=>{if(SNAP)Object.assign(S,JSON.parse(JSON.stringify(SNAP)));CHQ=null;setMode(S.mode);};
+setMode(1);renderGeo();
+</script>
+</body>
+</html>

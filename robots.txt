@@ -5,4 +5,4 @@ Disallow: /sims/
 Disallow: /student/
 Disallow: /files/
 Disallow: /files.html
-Sitemap: https://banafsajo.netlify.app/sitemap.xml
+Sitemap: https://banafsajo.higgsfield.app/sitemap.xml

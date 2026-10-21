@@ -51,6 +51,7 @@ body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--f);font-siz
 .dlg .bd{padding:0 20px 20px;display:grid;gap:10px}
 .dlg h4{margin:6px 0 2px;font-size:16px;color:var(--navy)}
 .dlg ul{margin:0;padding-right:18px}.dlg li{font-size:15px}
+.dlg .min{padding:26px 26px 22px;text-align:center}.dlg .min h2{margin:0 0 10px;font-size:26px;color:var(--navy)}.dlg .min .where{margin:0 auto 18px;max-width:520px;font-size:17px;line-height:1.7;color:var(--fg)}.dlg .min .btns{justify-content:center;margin-top:6px}.dlg .min .lockmsg{margin-bottom:12px}
 .dlg .lockmsg{background:#FFF6DF;color:#7A4B00;border-radius:10px;padding:8px 12px;font-weight:700}
 .btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
 .btn{font:inherit;font-weight:800;font-size:17px;padding:10px 20px;border-radius:12px;border:2px solid var(--navy);background:var(--navy);color:var(--navy-fg);cursor:pointer;text-decoration:none;display:inline-block}
@@ -73,8 +74,7 @@ body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--f);font-siz
  </header>
  <nav class="tabs"><a href="index.html">📚 المحطات والجولات</a><a class="cur" href="games.html">🎮 الألعاب التفاعلية</a><a href="claude.html">🛸 اسأل بنفسجو</a></nav>
  <section class="hero">
-  <div><h1>ألعاب ومحاكاة تفاعلية: جرّب بيدك قبل أن تحفظ القانون</h1><p>كل لعبة تعمل بالسحب والمنزلقات وتعرض الأرقام حيًّا، وفيها «وضع التحدي»: ٥ أسئلة بأرقام جديدة كل مرة مع شرح بطريقة القدرات.</p></div>
-  <div class="stats"><span>8 ألعاب</span><span>4 مجانية</span><span>4 للمشتركين</span><span>تعمل على الجوال</span></div>
+  <div><h1>اختر لعبة واضغط «تشغيل»</h1></div>
  </section>
  <div class="filters" id="tags" role="group" aria-label="التصفية"><button class="chip" aria-pressed="true" data-g="all">الكل</button><button class="chip" aria-pressed="false" data-g="free">مجاني</button><button class="chip" aria-pressed="false" data-g="paid">للمشتركين</button></div>
  <h2 class="sect" id="title">جميع الألعاب <small id="count"></small></h2>
@@ -94,15 +94,16 @@ body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--f);font-siz
  let flt='all',q='';
  function badge(g){return g.free?'<span class="badge">مجاني</span>':(unlocked?'<span class="badge open">✓ مفتوح</span>':'<span class="badge lock">🔒 للمشتركين</span>');}
  function render(){const list=G.filter(g=>(flt==='all'||(flt==='free')===g.free)&&(!q||(g.title+' '+g.tag+' '+g.desc+' '+g.learn.join(' ')).includes(q)));
-   $('#grid').innerHTML=list.map(g=>'<button class="card" data-id="'+g.id+'"><div class="thumb"><img loading="lazy" src="'+g.thumb+'" alt=""><div class="play"><b>▶</b></div>'+badge(g)+'</div><div class="cb"><span class="tg">'+esc(g.tag)+'</span><h3>'+esc(g.icon+' '+g.title)+'</h3><p>'+esc(g.desc)+'</p><div class="learn">'+g.learn.map(l=>'<span>'+esc(l)+'</span>').join('')+'</div></div></button>').join('');
+   $('#grid').innerHTML=list.map(g=>'<button class="card" data-id="'+g.id+'"><div class="thumb"><img loading="lazy" src="'+g.thumb+'" alt=""><div class="play"><b>▶</b></div>'+badge(g)+'</div><div class="cb"><h3>'+esc(g.icon+' '+g.title)+'</h3></div></button>').join('');
    $('#empty').hidden=list.length>0;$('#count').textContent=list.length+' من '+G.length;
    document.querySelectorAll('.card').forEach(b=>b.onclick=()=>open(b.dataset.id));}
  document.querySelectorAll('#tags .chip').forEach(b=>b.onclick=()=>{flt=b.dataset.g;document.querySelectorAll('#tags .chip').forEach(x=>x.setAttribute('aria-pressed',x===b));render();});
  $('#q').oninput=e=>{q=e.target.value.trim();render();};
  function modal(html){const ov=document.createElement('div');ov.className='ov';ov.innerHTML='<div class="dlg" role="dialog" aria-modal="true"><button class="x" aria-label="إغلاق">✕</button>'+html+'</div>';document.body.appendChild(ov);const close=()=>ov.remove();ov.querySelector('.x').onclick=close;ov.onclick=e=>{if(e.target===ov)close();};document.addEventListener('keydown',function k(e){if(e.key==='Escape'){close();document.removeEventListener('keydown',k);}});return ov;}
  function open(id){const g=G.find(x=>x.id===id);const can=g.free||unlocked;
-   const ov=modal('<div class="hd"><div class="thumb"><img src="'+g.thumb+'" alt=""><div class="play"><b>▶</b></div>'+badge(g)+'</div><div class="info"><h2>'+esc(g.icon+' '+g.title)+'</h2><div class="meta"><span>'+esc(g.tag)+'</span><span>'+(g.free?'مجاني':'للمشتركين')+'</span><span>وضع التحدي: ٥ أسئلة</span></div><p>'+esc(g.desc)+'</p>'+(can?'':'<div class="lockmsg">🔒 هذه اللعبة للمشتركين. أدخل رمز الاشتراك لفتح جميع الألعاب والمحطات.</div>')+'<div class="btns">'+(can?'<a class="btn" href="'+g.file+'">▶ تشغيل</a>':'<button class="btn" id="unlock">🔑 إدخال رمز الاشتراك</button>')+'</div></div></div><div class="bd"><h4>🎓 ماذا تتعلم؟</h4><ul>'+g.learn.map(l=>'<li>'+esc(l)+'</li>').join('')+'</ul><h4>🕹️ كيف تلعب؟</h4><p style="margin:0">جرّب المنزلقات والسحب أولًا حتى تفهم الفكرة، ثم اضغط «وضع التحدي» وأجب عن ٥ أسئلة؛ كل إجابة تأتي مع شرح من سطر واحد بطريقة القدرات.</p></div>');
-   ov.querySelector('.hd .thumb').onclick=()=>{if(can)location.href=g.file;else{ov.remove();gate();}};const u=ov.querySelector('#unlock');if(u)u.onclick=()=>{ov.remove();gate();};}
+   const i=G.indexOf(g);const nx=G[i+1];
+   const ov=modal('<div class="min"><h2>'+esc(g.icon+' '+g.title)+'</h2><p class="where">'+esc(g.desc)+'</p>'+(can?'':'<div class="lockmsg">🔒 للمشتركين — أدخل رمز الاشتراك</div>')+'<div class="btns">'+(can?'<a class="btn" href="'+g.file+'">▶ تشغيل</a>':'<button class="btn" id="unlock">🔑 رمز الاشتراك</button>')+(nx?'<button class="btn alt" id="nxt">اللعبة التالية ←</button>':'')+'</div></div>');
+   const u=ov.querySelector('#unlock');if(u)u.onclick=()=>{ov.remove();gate();};const n=ov.querySelector('#nxt');if(n)n.onclick=()=>{ov.remove();open(nx.id);};}
  function gate(){const ov=modal('<form class="gate" style="padding:22px 22px 18px"><h2 style="margin:0 0 6px;color:var(--navy)">🔑 دخول المشتركين</h2><p style="margin:0;color:var(--muted);font-size:15px">أدخل رمزك مرة واحدة على هذا الجهاز وتُفتح جميع الألعاب والمحطات.</p><label for="sname">اسمك</label><input id="sname" type="text" placeholder="الاسم الثلاثي" autocomplete="name"><label for="code">رمز الاشتراك</label><input id="code" type="text" placeholder="مثال: STAR-305" autocomplete="off"><div class="btns"><button class="btn" type="submit">فتح الجميع</button></div><div class="msg" id="msg"></div><p class="buy">ليس لديك رمز؟ تواصل مع أ. رناد حماد للاشتراك والحصول على رمزك الخاص.</p></form>');
    const f=ov.querySelector('form'),msg=ov.querySelector('#msg');if(acc){f.sname.value=acc.name||'';f.code.value=acc.code||'';}f.sname.focus();
    f.onsubmit=async e=>{e.preventDefault();const name=f.sname.value.trim(),code=f.code.value.trim().toUpperCase();if(!name){msg.className='msg bad';msg.textContent='اكتب اسمك أولًا';return;}

@@ -51,6 +51,7 @@ body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--f);font-siz
 .dlg .bd{padding:0 20px 20px;display:grid;gap:10px}
 .dlg h4{margin:6px 0 2px;font-size:16px;color:var(--navy)}
 .dlg ul{margin:0;padding-right:18px}.dlg li{font-size:15px}
+.dlg .min{padding:26px 26px 22px;text-align:center}.dlg .min h2{margin:0 0 10px;font-size:26px;color:var(--navy)}.dlg .min .where{margin:0 auto 18px;max-width:520px;font-size:17px;line-height:1.7;color:var(--fg)}.dlg .min .btns{justify-content:center;margin-top:6px}.dlg .min .lockmsg{margin-bottom:12px}
 .dlg .lockmsg{background:#FFF6DF;color:#7A4B00;border-radius:10px;padding:8px 12px;font-weight:700}
 .btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
 .btn{font:inherit;font-weight:800;font-size:17px;padding:10px 20px;border-radius:12px;border:2px solid var(--navy);background:var(--navy);color:var(--navy-fg);cursor:pointer;text-decoration:none;display:inline-block}
@@ -73,11 +74,9 @@ body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--f);font-siz
  </header>
  <nav class="tabs"><a class="cur" href="index.html">📚 المحطات والجولات</a><a href="games.html">🎮 الألعاب التفاعلية</a><a href="claude.html">🛸 اسأل بنفسجو</a></nav>
  <section class="hero">
-  <div><h1>محاكاة تفاعلية للقدرات الكمي: اختر محطة واضغط «تشغيل»</h1><p>كل محطة تفاعلية تعمل بنفسها: قانون ← مثال مشروح ← سؤال توأم بأرقام جديدة ← فواصل تركيز ← تحدي ← فخاخ قياس.</p></div>
-  <div class="stats"><span>17 محاكاة</span><span>12 محطة تأسيس</span><span>5 جولات تحدي</span><span>المحطتان 1 و2 مجانًا</span></div>
+  <div><h1>اختر محطة واضغط «تشغيل»</h1></div>
  </section>
  <div class="filters" id="tracks" role="group" aria-label="المسارات"><button class="chip" aria-pressed="true" data-t="all">الكل</button><button class="chip" aria-pressed="false" data-t="t1">🧱 مسار التأسيس</button><button class="chip" aria-pressed="false" data-t="t2">🚀 مسار التطبيق</button><button class="chip" aria-pressed="false" data-t="t3">🏆 مسار الاحتراف</button><button class="chip" aria-pressed="false" data-t="t4">🎯 مسار التحدي</button></div>
- <div class="filters" id="tags" role="group" aria-label="المهارات"></div>
  <h2 class="sect" id="title">جميع المحاكاة <small id="count"></small></h2>
  <div class="grid" id="grid"></div>
  <div class="empty" id="empty" hidden>لا توجد نتائج لهذا البحث.</div>
@@ -94,21 +93,17 @@ body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--f);font-siz
    $('#loginbtn').textContent=unlocked?('✓ '+(acc.name||'مشترك')):'🔑 دخول المشتركين';$('#loginbtn').classList.toggle('ok',unlocked);render();}
  let track='all',tag='all',q='';
  const tags=[...new Set(CARDS.map(c=>c.tag))];
- $('#tags').innerHTML='<button class="chip" aria-pressed="true" data-g="all">كل المهارات</button>'+tags.map(t=>'<button class="chip" aria-pressed="false" data-g="'+esc(t)+'">'+esc(t)+'</button>').join('');
  function badge(c){return c.free?'<span class="badge">مجاني</span>':(unlocked?'<span class="badge open">✓ مفتوح</span>':'<span class="badge lock">🔒 للمشتركين</span>');}
  function render(){const list=CARDS.filter(c=>(track==='all'||c.track===track)&&(tag==='all'||c.tag===tag)&&(!q||(c.title+' '+c.tag+' '+c.sub+' '+c.intro).includes(q)));
-   $('#grid').innerHTML=list.map(c=>'<button class="card" data-id="'+c.id+'"><div class="thumb"><img loading="lazy" src="'+c.thumb+'" alt=""><div class="play"><b>▶</b></div>'+badge(c)+'</div><div class="cb"><span class="tg">'+esc(TR[c.track])+' · '+esc(c.tag)+'</span><h3>'+esc(c.icon+' '+c.title)+'</h3><p>'+esc(c.sub)+'</p></div></button>').join('');
+   $('#grid').innerHTML=list.map(c=>'<button class="card" data-id="'+c.id+'"><div class="thumb"><img loading="lazy" src="'+c.thumb+'" alt=""><div class="play"><b>▶</b></div>'+badge(c)+'</div><div class="cb"><h3>'+esc(c.icon+' '+c.title)+'</h3></div></button>').join('');
    $('#empty').hidden=list.length>0;$('#count').textContent=list.length+' من '+CARDS.length;$('#title').firstChild.textContent=(track==='all'?'جميع المحاكاة ':TR[track]+' ');
    document.querySelectorAll('.card').forEach(b=>b.onclick=()=>open(b.dataset.id));}
  document.querySelectorAll('#tracks .chip').forEach(b=>b.onclick=()=>{track=b.dataset.t;document.querySelectorAll('#tracks .chip').forEach(x=>x.setAttribute('aria-pressed',x===b));render();});
- document.querySelectorAll('#tags .chip').forEach(b=>b.onclick=()=>{tag=b.dataset.g;document.querySelectorAll('#tags .chip').forEach(x=>x.setAttribute('aria-pressed',x===b));render();});
  $('#q').oninput=e=>{q=e.target.value.trim();render();};
  function modal(html){const ov=document.createElement('div');ov.className='ov';ov.innerHTML='<div class="dlg" role="dialog" aria-modal="true"><button class="x" aria-label="إغلاق">✕</button>'+html+'</div>';
    document.body.appendChild(ov);const close=()=>ov.remove();ov.querySelector('.x').onclick=close;ov.onclick=e=>{if(e.target===ov)close();};document.addEventListener('keydown',function k(e){if(e.key==='Escape'){close();document.removeEventListener('keydown',k);}});return ov;}
  function open(id){const c=CARDS.find(x=>x.id===id);const can=c.free||unlocked;const i=CARDS.indexOf(c);const nx=CARDS[i+1];
-   const ov=modal('<div class="hd"><div class="thumb"><img src="'+c.thumb+'" alt=""><div class="play"><b>▶</b></div>'+badge(c)+'</div><div class="info"><h2>'+esc(c.icon+' '+c.title)+'</h2><div class="meta"><span>'+esc(TR[c.track])+'</span><span>'+esc(c.tag)+'</span><span>'+esc(c.sub)+'</span></div><p>'+esc(c.intro)+'</p>'+(can?'':'<div class="lockmsg">🔒 هذه المحاكاة للمشتركين. أدخل رمز الاشتراك لفتح جميع المسارات.</div>')+'<div class="btns">'+(can?'<a class="btn" href="'+c.file+'">▶ تشغيل</a>':'<button class="btn" id="unlock">🔑 إدخال رمز الاشتراك</button>')+(nx?'<button class="btn alt" id="nxt">التالية: '+esc(nx.short)+'</button>':'')+'</div></div></div>'+
-     '<div class="bd">'+(c.where?'<h4>📍 أين تظهر في اختبار قياس؟</h4><p style="margin:0">'+esc(c.where)+'</p>':'')+(c.laws.length?'<h4>📐 من قوانين المحطة</h4><ul>'+c.laws.map(l=>'<li>'+esc(l)+'</li>').join('')+'</ul>':'')+(c.take?'<h4>🎒 وجبة المحطة</h4><p style="margin:0">'+esc(c.take)+'</p>':'')+'</div>');
-   ov.querySelector('.hd .thumb').onclick=()=>{if(can)location.href=c.file;else{ov.remove();gate();}};
+   const ov=modal('<div class="min"><h2>'+esc(c.icon+' '+c.title)+'</h2>'+(c.where?'<p class="where">📍 '+esc(c.where)+'</p>':'')+(can?'':'<div class="lockmsg">🔒 للمشتركين — أدخل رمز الاشتراك</div>')+'<div class="btns">'+(can?'<a class="btn" href="'+c.file+'">▶ تشغيل</a>':'<button class="btn" id="unlock">🔑 رمز الاشتراك</button>')+(nx?'<button class="btn alt" id="nxt">المرحلة التالية ←</button>':'')+'</div></div>');
    const u=ov.querySelector('#unlock');if(u)u.onclick=()=>{ov.remove();gate();};const n=ov.querySelector('#nxt');if(n)n.onclick=()=>{ov.remove();open(nx.id);};}
  function gate(){const ov=modal('<form class="gate" style="padding:22px 22px 18px"><h2 style="margin:0 0 6px;color:var(--navy)">🔑 دخول المشتركين</h2><p style="margin:0;color:var(--muted);font-size:15px">أدخل رمزك مرة واحدة على هذا الجهاز وتُفتح جميع المحاكاة.</p><label for="sname">اسمك</label><input id="sname" type="text" placeholder="الاسم الثلاثي" autocomplete="name"><label for="code">رمز الاشتراك</label><input id="code" type="text" placeholder="مثال: STAR-305" autocomplete="off"><div class="btns"><button class="btn" type="submit">فتح جميع المسارات</button></div><div class="msg" id="msg"></div><p class="buy">ليس لديك رمز؟ تواصل مع أ. رناد حماد للاشتراك والحصول على رمزك الخاص.</p></form>');
    const f=ov.querySelector('form'),msg=ov.querySelector('#msg');if(acc){f.sname.value=acc.name||'';f.code.value=acc.code||'';}f.sname.focus();

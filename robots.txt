@@ -1,8 +1,2 @@
 User-agent: *
-Allow: /
-Disallow: /lessons/
-Disallow: /sims/
-Disallow: /student/
-Disallow: /files/
-Disallow: /files.html
-Sitemap: https://nouraldeenhasan-art.github.io/banafsajo/sitemap.xml
+Disallow: /
